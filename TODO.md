@@ -1,17 +1,17 @@
 **TODO**
 
-- [ ] Create a common slice function
 - [ ] Create headMain function
-- [ ] Make head work on content instead file without any options(default)
 
 **Maybe**
 
-- [ ] Extract 0 as start into constant
 - [ ] Separate split and join functions to another file
 - [ ] Make head file available at top level 
 
 **Done**
 
+- [X] Extract 0 as start into constant
+- [X] Create a common slice function
+- [X] Make head work on content instead file without any options(default)
 - [X] Implement -c option
 - [X] Implement firstBytes function
 - [X] Implement -n option

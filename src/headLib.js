@@ -1,21 +1,12 @@
-const NEWLINE = '\n';
-
-const split = (content) => content.split(NEWLINE);
-
-const join = (lines) => lines.join(NEWLINE);
-
-const firstLines = (lines, count) => lines.slice(0, count);
-
-const firstBytes = (line, count) => line.slice(0, count);
+const { split, join, slice, START } = require('./stringUtils.js');
 
 const head = (content, options) => {
   const lines = split(content);
   const key = 'numOfLines';
   if (options[key]) {
-    return join(firstLines(lines, options[key]));
+    return join(slice(lines, options[key]));
   }
-  return firstBytes(lines[0], options['bytes']);
+  return slice(lines[START], options['bytes']);
 };
 
-exports.firstLines = firstLines;
 exports.head = head;
