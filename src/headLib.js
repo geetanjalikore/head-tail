@@ -1,0 +1,1 @@
+exports.head = (content) => content;
