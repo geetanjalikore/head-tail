@@ -10,6 +10,7 @@
 
 **Done**
 
+- [X] Correct the contract and tests of firstLines
 - [X] Consider different contract for head
 - [X] Rename head function to firstLines
 - [X] Decide contract for firstLines

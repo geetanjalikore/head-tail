@@ -4,15 +4,11 @@ const split = (content) => content.split(NEWLINE);
 
 const join = (lines) => lines.join(NEWLINE);
 
-const firstLines = function (lines) {
-  const start = 0;
-  const count = 10;
-  return lines.slice(start, count);
-};
+const firstLines = (lines, count) => lines.slice(0, count);
 
-const head = function (content) {
+const head = (content) => {
   const lines = split(content);
-  return join(firstLines(lines));
+  return join(firstLines(lines, 10));
 };
 
 exports.firstLines = firstLines;
