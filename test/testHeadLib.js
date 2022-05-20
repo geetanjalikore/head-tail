@@ -1,18 +1,18 @@
 const assert = require('assert');
-const { head } = require('../src/headLib.js');
+const { firstLines } = require('../src/headLib.js');
 
 describe('head', () => {
   it('Should give first line when only 1 line is provided', () => {
-    assert.strictEqual(head('hello'), 'hello');
-    assert.strictEqual(head('bye'), 'bye');
+    assert.deepStrictEqual(firstLines(['hello']), ['hello']);
+    assert.deepStrictEqual(firstLines(['bye']), ['bye']);
   });
   it('Should give two lines when only 2 lines are provided', () => {
-    assert.strictEqual(head('hello\nbye'), 'hello\nbye');
-    assert.strictEqual(head('bye\nhello'), 'bye\nhello');
+    assert.deepStrictEqual(firstLines(['hello'], ['bye']), ['hello'], ['bye']);
+    assert.deepStrictEqual(firstLines(['bye'], ['hello']), ['bye'], ['hello']);
   });
   it('Should give only first 10 lines for multiple lines', () => {
-    const content = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk';
-    const expected = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj';
-    assert.strictEqual(head(content), expected);
+    const content = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'];
+    const expected = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+    assert.deepStrictEqual(firstLines(content), expected);
   });
 });
