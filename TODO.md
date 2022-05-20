@@ -9,6 +9,7 @@
 
 **Done**
 
+- [X] Extract firstNLines and firstNBytes function
 - [X] Extract 0 as start into constant
 - [X] Create a common slice function
 - [X] Make head work on content instead file without any options(default)
