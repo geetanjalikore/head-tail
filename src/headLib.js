@@ -6,9 +6,15 @@ const join = (lines) => lines.join(NEWLINE);
 
 const firstLines = (lines, count) => lines.slice(0, count);
 
-const head = (content, { count }) => {
+const firstBytes = (line, count) => line.slice(0, count);
+
+const head = (content, options) => {
   const lines = split(content);
-  return join(firstLines(lines, count));
+  const key = 'numOfLines';
+  if (options[key]) {
+    return join(firstLines(lines, options[key]));
+  }
+  return firstBytes(lines[0], options['bytes']);
 };
 
 exports.firstLines = firstLines;

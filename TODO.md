@@ -1,17 +1,20 @@
 **TODO**
 
+- [ ] Create a common slice function
 - [ ] Create headMain function
-- [ ] Implement -n option
 - [ ] Make head work on content instead file without any options(default)
 
 **Maybe**
 
+- [ ] Extract 0 as start into constant
 - [ ] Separate split and join functions to another file
-- [ ] Extract 0 and 10 in constants
 - [ ] Make head file available at top level 
 
 **Done**
 
+- [X] Implement -c option
+- [X] Implement firstBytes function
+- [X] Implement -n option
 - [X] Accept count as an option object for head
 - [X] Test head function
 - [X] Correct the contract and tests of firstLines
