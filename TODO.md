@@ -1,7 +1,8 @@
 **TODO**
 
+- [ ] Create different functions for split and join
 - [ ] Consider different contract for head
-- [ ] Make head work on content instead file without any options
+- [ ] Make head work on content instead file without any options(default)
 
 **Done**
 
