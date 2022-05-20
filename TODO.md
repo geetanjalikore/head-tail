@@ -1,6 +1,5 @@
 **TODO**
 
-- [ ] Test head function
 - [ ] Implement -n option
 - [ ] Make head work on content instead file without any options(default)
 
@@ -10,6 +9,7 @@
 
 **Done**
 
+- [X] Test head function
 - [X] Correct the contract and tests of firstLines
 - [X] Consider different contract for head
 - [X] Rename head function to firstLines
