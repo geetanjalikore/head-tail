@@ -1,11 +1,11 @@
 **TODO**
 
-- [ ] Throw error when non-existing file is provided
-- [ ] Make head available at top level 
 - [ ] Make head work for more than one file
     - [ ] head file1 file2 ...
     - [ ] head -n 3 file1 file2 ...
     - [ ] head -c 5 file1 file2 ...
+- [ ] Throw error when non-existing file is provided
+- [ ] Make head available at top level 
     
 **Maybe**
 
@@ -13,6 +13,8 @@
 
 **Done**
 
+- [X] parseArgs should parse multiple files
+- [X] Remove stringUtils 
 - [X] Throw error for more than one option
 - [X] Test parseArgs function
 - [X] head file 

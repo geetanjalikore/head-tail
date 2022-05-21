@@ -1,12 +1,17 @@
-const { split, join } = require('./stringUtils.js');
 const { parseArgs } = require('./parseArgs.js');
+
+const NEWLINE = '\n';
+
+const split = (content) => content.split(NEWLINE);
+
+const join = (lines) => lines.join(NEWLINE);
+
+const firstNBytes = (content, count) => content.slice(0, count);
 
 const firstNLines = (content, count) => {
   const lines = split(content);
   return join(lines.slice(0, count));
 };
-
-const firstNBytes = (content, count) => content.slice(0, count);
 
 const head = (content, { count, bytes }) => {
   return bytes ? firstNBytes(content, bytes) : firstNLines(content, count);

@@ -6,14 +6,14 @@ const getOptions = function (args) {
   const keys = { '-n': 'count', '-c': 'bytes' };
   const options = { count: 10, bytes: 0 };
   let key;
+  let index = 0;
 
-  for (let index = 0; index < args.length - 1; index += 2) {
-    if (isByte(args[index]) || isCount(args[index])) {
-      key = keys[args[index]];
-      options[key] = +args[index + 1];
-    }
+  while (isByte(args[index]) || isCount(args[index])) {
+    key = keys[args[index]];
+    options[key] = +args[index + 1];
+    index = index + 2;
   }
-  return options;
+  return [options, index];
 };
 
 const parseArgs = (args) => {
@@ -22,9 +22,9 @@ const parseArgs = (args) => {
       message: 'head: can\'t combine line and byte counts'
     };
   }
-  const options = getOptions(args);
-  const fileName = args[args.length - 1];
-  return [fileName, options];
+  const [options, index] = getOptions(args);
+  const fileNames = args.slice(index);
+  return [fileNames, options];
 };
 
 exports.parseArgs = parseArgs;
