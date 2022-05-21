@@ -18,9 +18,24 @@ const head = (content, { count, bytes }) => {
 };
 
 const headMain = (readFile, ...args) => {
-  const [fileName, options] = parseArgs(args);
-  const content = readFile(fileName, 'utf8');
-  return head(content, options);
+  let fileNames, options;
+  try {
+    [fileNames, options] = parseArgs(args);
+  } catch (error) {
+    return error.message;
+  }
+
+  if (fileNames.length < 1) {
+    return 'usage: head[-n lines | -c bytes][file ...]';
+  }
+
+  return fileNames.map((fileName) => {
+    try {
+      return head(readFile(fileName, 'utf8'), options);
+    } catch (error) {
+      return error.message;
+    }
+  }).join('\n');
 };
 
 exports.head = head;
