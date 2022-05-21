@@ -1,17 +1,24 @@
 **TODO**
 
-- [ ] Test parseArgs function
+- [ ] Throw error when non-existing file is provided
+- [ ] Make head available at top level 
 - [ ] Make head work for more than one file
-- [ ] Throw error for more than one option
-- [ ] Throw error when non-exist file is provided
-- [ ] Make head file available at top level 
-
+    - [ ] head file1 file2 ...
+    - [ ] head -n 3 file1 file2 ...
+    - [ ] head -c 5 file1 file2 ...
+    
 **Maybe**
 
 - [ ] Separate tests of headMain and head into other file
 
 **Done**
 
+- [X] Throw error for more than one option
+- [X] Test parseArgs function
+- [X] head file 
+- [X] head -n 3 file 
+- [X] head -c 5 file
+- [X] head -n 1 -n 3 file
 - [X] Create parseArgs function
 - [X] Create headMain function
 - [X] Separate split and join functions to another file

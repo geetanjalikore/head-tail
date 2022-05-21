@@ -1,5 +1,6 @@
 const assert = require('assert');
-const { head, firstNLines, firstNBytes, headMain } = require('../src/headLib.js');
+const lib = require('../src/headLib.js');
+const { head, firstNLines, firstNBytes, headMain } = lib;
 
 describe('head', () => {
   it('Should give first line when only 1 line is provided', () => {
