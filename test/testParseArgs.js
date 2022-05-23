@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 const assert = require('assert');
 const { parseArgs } = require('../src/parseArgs.js');
 
@@ -38,8 +37,8 @@ describe('parseArgs', () => {
 
   it('Should throw error when two options are combined', () => {
     const expected = { message: 'head: can\'t combine line and byte counts' };
-    assert.throws(() => parseArgs(['-n', 1, '-c', 1, 'abc.txt']), expected);
-    assert.throws(() => parseArgs(['-n', 1, '-c1', 'abc.txt']), expected);
+    assert.throws(() => parseArgs(['-n', '1', '-c', '1', 'abc.txt']), expected);
+    assert.throws(() => parseArgs(['-n', '1', '-c1', 'abc.txt']), expected);
   });
 
   it('Should parse two files', () => {
@@ -49,13 +48,13 @@ describe('parseArgs', () => {
   });
 
   it('Should parse two files with -n option', () => {
-    const args = ['-n', 1, 'abc.txt', 'xyz.txt'];
+    const args = ['-n', '1', 'abc.txt', 'xyz.txt'];
     const expected = [['abc.txt', 'xyz.txt'], { option: '-n', value: 1 }];
     assert.deepStrictEqual(parseArgs(args), expected);
   });
 
   it('Should parse two files with -c option', () => {
-    const args = ['-c', 1, 'abc.txt', 'xyz.txt'];
+    const args = ['-c', '1', 'abc.txt', 'xyz.txt'];
     const expected = [['abc.txt', 'xyz.txt'], { option: '-c', value: 1 }];
     assert.deepStrictEqual(parseArgs(args), expected);
   });
@@ -65,7 +64,7 @@ describe('parseArgs', () => {
       message:
         'head: illegal option -- -k\nusage: head[-n lines | -c bytes][file ...]'
     };
-    assert.throws(() => parseArgs(['-k', 1, 'abc.txt']), expected);
+    assert.throws(() => parseArgs(['-k', '1', 'abc.txt']), expected);
   });
 
   it('Should throw an error if value is not provided with option', () => {
@@ -102,17 +101,25 @@ describe('parseArgs', () => {
 
   it('Should parse multiple options with and without space', () => {
     let expected = [['abc.txt'], { option: '-n', value: 6 }];
-    assert.deepStrictEqual(parseArgs(['-n', 1, '-n6', 'abc.txt']), expected);
+    assert.deepStrictEqual(parseArgs(['-n', '1', '-n6', 'abc.txt']), expected);
 
     expected = [['abc.txt'], { option: '-n', value: 1 }];
-    assert.deepStrictEqual(parseArgs(['-n', 6, '-n1', 'abc.txt']), expected);
+    assert.deepStrictEqual(parseArgs(['-n', '6', '-n1', 'abc.txt']), expected);
 
     expected = [['abc.txt'], { option: '-c', value: 1 }];
-    assert.deepStrictEqual(parseArgs(['-c', 6, '-c1', 'abc.txt']), expected);
+    assert.deepStrictEqual(parseArgs(['-c', '6', '-c1', 'abc.txt']), expected);
   });
 
   it('should throw error when option count is less than 1', () => {
     const expected = { message: 'head: illegal line count -- 0' };
-    assert.throws(() => parseArgs(['-n', 0, 'abc.txt']), expected);
+    assert.throws(() => parseArgs(['-n', '0', 'abc.txt']), expected);
+  });
+
+  it('Should work for only provided number with hyphen', () => {
+    let expected = [['abc.txt'], { option: '-n', value: 1 }];
+    assert.deepStrictEqual(parseArgs(['-1', 'abc.txt']), expected);
+
+    expected = [['abc.txt'], { option: '-n', value: 2 }];
+    assert.deepStrictEqual(parseArgs(['-2', 'abc.txt']), expected);
   });
 });

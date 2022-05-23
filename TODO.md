@@ -1,6 +1,5 @@
 **TODO**
 
-- [ ] head -1
     
 **Maybe**
 
@@ -8,6 +7,7 @@
 
 **Done**
 
+- [X] head -1
 - [X] Implement validate function for validation of args
 - [X] change the approach of illegal option 
 - [X] Make head work for options and values without spaces

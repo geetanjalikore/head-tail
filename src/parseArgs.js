@@ -1,9 +1,14 @@
-const isIllegalOption = (option) => {
-  const regEx = /-[^nc]/;
-  return regEx.test(option);
-};
+const isIllegalCount = (value) => !isFinite(value) || value < 1;
+
+const isIllegalOption = (option) =>
+  !(option.startsWith('-n') || option.startsWith('-c'));
+
+const isOption = (arg) => /^-/.test(arg);
 
 const splitOption = (arg) => {
+  if (isFinite(arg)) {
+    return ['-n', Math.abs(arg)];
+  }
   const option = arg.substring(0, 2);
   const value = arg.substring(2);
   return [option, value];
@@ -11,13 +16,12 @@ const splitOption = (arg) => {
 
 const splitArgs = (params) => {
   const args = [];
-  const regEx = /^-..+$/;
   let index = 0;
 
   while (index < params.length) {
-    if (regEx.test(params[index])) {
+    if (params[index].startsWith('-')) {
       const [option, value] = splitOption(params[index]);
-      args.push(option, value);
+      value !== '' ? args.push(option, value) : args.push(option);
     } else {
       args.push(params[index]);
     }
@@ -25,8 +29,6 @@ const splitArgs = (params) => {
   }
   return args;
 };
-
-const isOption = (arg) => /^-/.test(arg);
 
 const illegalOptionError = (option) => {
   return {
@@ -55,7 +57,7 @@ const validateOption = (option, value) => {
   if (value === undefined) {
     throw argToOptionError(option);
   }
-  if (!isFinite(value) || value < 1) {
+  if (isIllegalCount(value)) {
     throw illegalCountError(option, value);
   }
 };
@@ -72,17 +74,23 @@ const getOptions = function (args) {
 
     options.option = option;
     options.value = +value;
+
     index = index + 2;
   }
   return [options, index];
 };
 
+const combinationError = () => {
+  return {
+    message: 'head: can\'t combine line and byte counts'
+  };
+};
+
 const parseArgs = (params) => {
   const args = splitArgs(params);
+
   if (args.includes('-n') && args.includes('-c')) {
-    throw {
-      message: 'head: can\'t combine line and byte counts'
-    };
+    throw combinationError();
   }
 
   const [options, index] = getOptions(args);
