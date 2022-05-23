@@ -13,8 +13,11 @@ const firstNLines = (content, count) => {
   return join(lines.slice(0, count));
 };
 
-const head = (content, { count, bytes }) => {
-  return bytes ? firstNBytes(content, bytes) : firstNLines(content, count);
+const head = (content, { option, value }) => {
+  if (option === '-c') {
+    return firstNBytes(content, value);
+  }
+  return firstNLines(content, value);
 };
 
 const headMain = (readFile, ...args) => {
