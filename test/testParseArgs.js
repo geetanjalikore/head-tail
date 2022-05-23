@@ -63,17 +63,12 @@ describe('parseArgs', () => {
   it('Should throw error when illegal option is provided', () => {
     const expected = {
       message:
-        'head: illegal option --\nusage: head[-n lines | -c bytes][file ...]'
+        'head: illegal option -- -k\nusage: head[-n lines | -c bytes][file ...]'
     };
     assert.throws(() => parseArgs(['-k', 1, 'abc.txt']), expected);
   });
 
-  it('Should throw an error if value is not provided with -n option', () => {
-    const expected = 'head: option requires an argument --n\nusage: head[-n lines | -c bytes][file ...]';
-    assert.throws(() => parseArgs(['-n']), expected);
-  });
-
-  it('Should throw an error if value is not provided with -c option', () => {
+  it('Should throw an error if value is not provided with option', () => {
     let expected = { message: 'head: option requires an argument -- -c\nusage: head[-n lines | -c bytes][file ...]' };
     assert.throws(() => parseArgs(['-c']), expected);
 
@@ -114,5 +109,10 @@ describe('parseArgs', () => {
 
     expected = [['abc.txt'], { option: '-c', value: 1 }];
     assert.deepStrictEqual(parseArgs(['-c', 6, '-c1', 'abc.txt']), expected);
+  });
+
+  it('should throw error when option count is less than 1', () => {
+    const expected = { message: 'head: illegal line count -- 0' };
+    assert.throws(() => parseArgs(['-n', 0, 'abc.txt']), expected);
   });
 });

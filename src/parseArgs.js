@@ -1,9 +1,4 @@
-/* eslint-disable max-statements */
 /* eslint-disable complexity */
-const isByte = (option) => '-c' === option;
-
-const isCount = (option) => '-n' === option;
-
 const isIllegalOption = (option) => {
   const regEx = /-[^nc]/;
   return regEx.test(option);
@@ -26,26 +21,51 @@ const splitArgs = (params) => {
   return args;
 };
 
+const isOption = (arg) => /^-/.test(arg);
+
+const illegalOptionError = (option) => {
+  return {
+    message:
+      `head: illegal option -- ${option}\n` +
+      'usage: head[-n lines | -c bytes][file ...]'
+  };
+};
+
+const argToOptionError = (option) => {
+  return {
+    message: `head: option requires an argument -- ${option}\n` +
+      'usage: head[-n lines | -c bytes][file ...]'
+  };
+};
+
+const illegalCountError = (option, value) => {
+  const type = option === '-c' ? 'byte' : 'line';
+  return { message: `head: illegal ${type} count -- ${value}` };
+};
+
+const validateOption = (option, value) => {
+  if (isIllegalOption(option)) {
+    throw illegalOptionError(option);
+  }
+  if (value === undefined) {
+    throw argToOptionError(option);
+  }
+  if (!isFinite(value) || value < 1) {
+    throw illegalCountError(option, value);
+  }
+};
+
 const getOptions = function (args) {
   const options = { option: '-n', value: 10 };
   let index = 0;
 
-  while (isByte(args[index]) || isCount(args[index])) {
-    options.option = args[index];
+  while (isOption(args[index])) {
+    const option = args[index];
     const value = args[index + 1];
 
-    if (!value) {
-      throw {
-        message: `head: option requires an argument -- ${options.option}\n` +
-          'usage: head[-n lines | -c bytes][file ...]'
-      };
-    }
+    validateOption(option, value);
 
-    if (!isFinite(value)) {
-      const type = options.option === '-c' ? 'byte' : 'line';
-      throw { message: `head: illegal ${type} count -- ${value}` };
-    }
-
+    options.option = option;
     options.value = +value;
     index = index + 2;
   }
@@ -53,13 +73,6 @@ const getOptions = function (args) {
 };
 
 const parseArgs = (params) => {
-  if (params.some(isIllegalOption)) {
-    throw {
-      message:
-        'head: illegal option --\nusage: head[-n lines | -c bytes][file ...]'
-    };
-  }
-
   const args = splitArgs(params);
   if (args.includes('-n') && args.includes('-c')) {
     throw {

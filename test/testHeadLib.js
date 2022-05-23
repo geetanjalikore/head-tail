@@ -153,7 +153,7 @@ describe('headMain', () => {
   });
 
   it('Should throw error when illegal option is provided', () => {
-    const expected = 'head: illegal option --\nusage: head[-n lines | -c bytes][file ...]';
+    const expected = 'head: illegal option -- -k\nusage: head[-n lines | -c bytes][file ...]';
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
     const args = ['-k', 1, 'abc.txt'];
     assert.strictEqual(headMain(readFile, ...args), expected);

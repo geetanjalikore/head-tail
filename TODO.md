@@ -8,6 +8,8 @@
 
 **Done**
 
+- [X] Implement validate function for validation of args
+- [X] change the approach of illegal option 
 - [X] Make head work for options and values without spaces
 - [X] Throw error for head -n/-c file 
 - [X] Change the structure of options
