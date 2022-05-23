@@ -1,18 +1,23 @@
-/* eslint-disable complexity */
 const isIllegalOption = (option) => {
   const regEx = /-[^nc]/;
   return regEx.test(option);
 };
 
+const splitOption = (arg) => {
+  const option = arg.substring(0, 2);
+  const value = arg.substring(2);
+  return [option, value];
+};
+
 const splitArgs = (params) => {
   const args = [];
-  const regEx = /^-[nc].+$/;
+  const regEx = /^-..+$/;
   let index = 0;
 
   while (index < params.length) {
     if (regEx.test(params[index])) {
-      args.push(params[index].substring(0, 2));
-      args.push(params[index].substring(2));
+      const [option, value] = splitOption(params[index]);
+      args.push(option, value);
     } else {
       args.push(params[index]);
     }
