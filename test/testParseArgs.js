@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const assert = require('assert');
 const { parseArgs } = require('../src/parseArgs.js');
 
@@ -73,8 +74,19 @@ describe('parseArgs', () => {
   });
 
   it('Should throw an error if value is not provided with -c option', () => {
-    const expected = 'head: option requires an argument --c\nusage: head[-n lines | -c bytes][file ...]';
+    let expected = { message: 'head: option requires an argument -- -c\nusage: head[-n lines | -c bytes][file ...]' };
     assert.throws(() => parseArgs(['-c']), expected);
+
+    expected = { message: 'head: option requires an argument -- -n\nusage: head[-n lines | -c bytes][file ...]' };
+    assert.throws(() => parseArgs(['-n']), expected);
+  });
+
+  it('Should throw an error if value of options is not numeric', () => {
+    let expected = { message: 'head: illegal byte count -- f' };
+    assert.throws(() => parseArgs(['-cf']), expected);
+
+    expected = { message: 'head: illegal line count -- f' };
+    assert.throws(() => parseArgs(['-nf']), expected);
   });
 
   it('Should parse option and value without space', () => {

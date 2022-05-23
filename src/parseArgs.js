@@ -1,3 +1,5 @@
+/* eslint-disable max-statements */
+/* eslint-disable complexity */
 const isByte = (option) => '-c' === option;
 
 const isCount = (option) => '-n' === option;
@@ -9,7 +11,7 @@ const isIllegalOption = (option) => {
 
 const splitArgs = (params) => {
   const args = [];
-  const regEx = /^-.\d+$/;
+  const regEx = /^-[nc].+$/;
   let index = 0;
 
   while (index < params.length) {
@@ -30,15 +32,21 @@ const getOptions = function (args) {
 
   while (isByte(args[index]) || isCount(args[index])) {
     options.option = args[index];
-    options.value = +args[index + 1];
+    const value = args[index + 1];
 
-    if (!isFinite(options.value)) {
+    if (!value) {
       throw {
-        message:
-          `head: option requires an argument -- ${args[index]}\n` +
+        message: `head: option requires an argument -- ${options.option}\n` +
           'usage: head[-n lines | -c bytes][file ...]'
       };
     }
+
+    if (!isFinite(value)) {
+      const type = options.option === '-c' ? 'byte' : 'line';
+      throw { message: `head: illegal ${type} count -- ${value}` };
+    }
+
+    options.value = +value;
     index = index + 2;
   }
   return [options, index];
