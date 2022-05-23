@@ -25,7 +25,7 @@ const headMain = (readFile, ...args) => {
     return error.message;
   }
 
-  if (fileNames.length < 1) {
+  if (fileNames.length < 1 || args[0] === '--help') {
     return 'usage: head[-n lines | -c bytes][file ...]';
   }
 

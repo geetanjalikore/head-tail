@@ -1,6 +1,9 @@
 **TODO**
 
+- [ ] Change the structure of options
 - [ ] Make head work for options and values without spaces
+- [ ] Throw error for head -n/-c file 
+- [ ] Make head work for head -1
     
 **Maybe**
 
@@ -8,6 +11,8 @@
 
 **Done**
 
+- [X] Throw error for illegal option 
+    -[X] head -k 1 file
 - [X] Make mockReadFile work for multiple files
 - [X] Make head work for more than one file
     - [X] head file1 file2 ...

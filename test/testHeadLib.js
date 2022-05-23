@@ -75,7 +75,7 @@ describe('firstNBytes', () => {
 const mockReadFile = (fileContents) => {
   return (fileName, encoding) => {
     if (!Object.keys(fileContents).includes(fileName)) {
-      throw { 'message': 'File not found' };
+      throw { 'message': `${fileName} not found` };
     }
     assert.equal(encoding, 'utf8');
     return fileContents[fileName];
@@ -124,7 +124,7 @@ describe('headMain', () => {
     assert.strictEqual(headMain(...args), 'hello\nbye\nbye\nhello');
   });
 
-  it('Should give first 2 lines of two files with -c option', () => {
+  it('Should give first 2 bytes of two files with -c option', () => {
     const readFile = mockReadFile({ 'abc.txt': 'hello', 'xyz.txt': 'bye' });
     const args = [readFile, '-c', 2, 'abc.txt', 'xyz.txt'];
     assert.strictEqual(headMain(...args), 'he\nby');
@@ -132,7 +132,7 @@ describe('headMain', () => {
 
   it('Should throw an error if unreadble file is provided', () => {
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
-    const expected = 'File not found';
+    const expected = 'xyz.txt not found';
     assert.strictEqual(headMain(readFile, 'xyz.txt'), expected);
   });
 
@@ -147,5 +147,12 @@ describe('headMain', () => {
     const expected = 'usage: head[-n lines | -c bytes][file ...]';
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
     assert.strictEqual(headMain(readFile), expected);
+  });
+
+  it('Should throw error when illegal option is provided', () => {
+    const expected = 'head: illegal option --k\nusage: head[-n lines | -c bytes][file ...]';
+    const readFile = mockReadFile({ 'abc.txt': 'hello' });
+    const args = ['-k', 1, 'abc.txt'];
+    assert.strictEqual(headMain(readFile, args), expected);
   });
 });

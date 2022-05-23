@@ -57,4 +57,13 @@ describe('parseArgs', () => {
     const expected = [['abc.txt', 'xyz.txt'], { count: 10, bytes: 1 }];
     assert.deepStrictEqual(parseArgs(args), expected);
   });
+
+  it('Should throw error when illegal option is provided', () => {
+    const expected = {
+      message:
+        'head: illegal option --k\nusage: head[-n lines | -c bytes][file ...]'
+    };
+    assert.throws(() => parseArgs(['-k', 1, 'abc.txt']), expected);
+  });
+
 });

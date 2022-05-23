@@ -2,6 +2,11 @@ const isByte = (option) => '-c' === option;
 
 const isCount = (option) => '-n' === option;
 
+const isIllegalOption = (option) => {
+  const regEx = /-[^nc]/;
+  return regEx.test(option);
+};
+
 const getOptions = function (args) {
   const keys = { '-n': 'count', '-c': 'bytes' };
   const options = { count: 10, bytes: 0 };
@@ -22,6 +27,14 @@ const parseArgs = (args) => {
       message: 'head: can\'t combine line and byte counts'
     };
   }
+
+  if (args.some(isIllegalOption)) {
+    throw {
+      message:
+        'head: illegal option --k\nusage: head[-n lines | -c bytes][file ...]'
+    };
+  }
+
   const [options, index] = getOptions(args);
   const fileNames = args.slice(index);
   return [fileNames, options];
