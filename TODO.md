@@ -1,5 +1,6 @@
 **TODO**
 
+- [ ] print the errors on error stream, output on output stream
     
 **Maybe**
 

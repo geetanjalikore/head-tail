@@ -75,118 +75,152 @@ describe('firstNBytes', () => {
   });
 });
 
+const fileNotFoundError = (file) => {
+  return { message: `${file} not found` };
+};
+
 const mockReadFile = (fileContents) => {
   return (fileName, encoding) => {
     if (!Object.keys(fileContents).includes(fileName)) {
-      throw { 'message': `${fileName} not found` };
+      throw fileNotFoundError(fileName);
     }
-    assert.equal(encoding, 'utf8');
+    assert.strictEqual(encoding, 'utf8');
     return fileContents[fileName];
+  };
+};
+
+const mockConsole = function (expected) {
+  let count = 0;
+  return {
+    log: (actual) => {
+      assert.strictEqual(actual, expected[count]);
+      count += 1;
+      return actual;
+    },
+    err: (actual) => {
+      assert.strictEqual(actual, expected[count]);
+      count += 1;
+      return actual;
+    }
   };
 };
 
 describe('headMain', () => {
   it('Should give first line without any option provided', () => {
-    let readFile = mockReadFile({ 'abc.txt': 'hello' });
-    assert.strictEqual(headMain(readFile, 'abc.txt'), 'hello');
-
-    readFile = mockReadFile({ 'xyz.txt': 'bye' });
-    assert.strictEqual(headMain(readFile, 'xyz.txt'), 'bye');
+    const readFile = mockReadFile({ 'abc.txt': 'hello' });
+    const { log, err } = mockConsole(['hello']);
+    assert.strictEqual(headMain(readFile, { log, err }, 'abc.txt'), 0);
   });
 
   it('Should give first 10 lines default when more lines are provided', () => {
     const content = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk';
     const expected = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj';
     const readFile = mockReadFile({ 'abc.txt': content });
-    assert.strictEqual(headMain(readFile, 'abc.txt'), expected);
+    const { log, err } = mockConsole([expected]);
+    assert.strictEqual(headMain(readFile, { log, err }, 'abc.txt'), 0);
   });
 
   it('Should give first 6 lines with count option', () => {
     const content = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk';
     const expected = 'a\nb\nc\nd\ne\nf';
     const readFile = mockReadFile({ 'abc.txt': content });
-    assert.strictEqual(headMain(readFile, '-n', '6', 'abc.txt'), expected);
+    const { log, err } = mockConsole([expected]);
+    const args = [readFile, { log, err }, '-n', '6', 'abc.txt'];
+    assert.strictEqual(headMain(...args), 0);
   });
 
   it('Should give first 1 byte ', () => {
-    let readFile = mockReadFile({ 'abc.txt': 'hello' });
-    assert.strictEqual(headMain(readFile, '-c', '1', 'abc.txt'), 'h');
-
-    readFile = mockReadFile({ 'abc.txt': 'bye' });
-    assert.strictEqual(headMain(readFile, '-c', '1', 'abc.txt'), 'b');
+    const readFile = mockReadFile({ 'abc.txt': 'hello' });
+    const { log, err } = mockConsole(['h']);
+    const args = [readFile, { log, err }, '-c', '1', 'abc.txt'];
+    assert.strictEqual(headMain(...args), 0);
   });
 
   it('Should give first line of two files', () => {
     const readFile = mockReadFile({ 'abc.txt': 'hello', 'xyz.txt': 'bye' });
-    assert.strictEqual(headMain(readFile, 'abc.txt', 'xyz.txt'), 'hello\nbye');
+    const { log, err } = mockConsole(['hello', 'bye']);
+    const args = [readFile, { log, err }, 'abc.txt', 'xyz.txt'];
+    assert.strictEqual(headMain(...args), 0);
   });
 
   it('Should give first 2 lines of two files with -n option', () => {
-    const readFile = mockReadFile({ 'abc.txt': 'hello\nbye', 'xyz.txt': 'bye\nhello' });
-    const args = [readFile, '-n', '2', 'abc.txt', 'xyz.txt'];
-    assert.strictEqual(headMain(...args), 'hello\nbye\nbye\nhello');
+    const files = { 'abc.txt': 'hello\nbye', 'xyz.txt': 'bye\nhello' };
+    const readFile = mockReadFile(files);
+    const { log, err } = mockConsole(['hello\nbye', 'bye\nhello']);
+    const args = [readFile, { log, err }, '-n', '2', 'abc.txt', 'xyz.txt'];
+    assert.strictEqual(headMain(...args), 0);
   });
 
   it('Should give first 2 bytes of two files with -c option', () => {
     const readFile = mockReadFile({ 'abc.txt': 'hello', 'xyz.txt': 'bye' });
-    const args = [readFile, '-c', '2', 'abc.txt', 'xyz.txt'];
-    assert.strictEqual(headMain(...args), 'he\nby');
+    const { log, err } = mockConsole(['he', 'by']);
+    const args = [readFile, { log, err }, '-c', '2', 'abc.txt', 'xyz.txt'];
+    assert.strictEqual(headMain(...args), 0);
   });
 
   it('Should throw an error if unreadble file is provided', () => {
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
     const expected = 'xyz.txt not found';
-    assert.strictEqual(headMain(readFile, 'xyz.txt'), expected);
+    const { log, err } = mockConsole([expected]);
+    assert.strictEqual(headMain(readFile, { log, err }, 'xyz.txt'), 1);
   });
 
   it('Should throw an error if -n and -c options are combined', () => {
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
     const expected = 'head: can\'t combine line and byte counts';
-    const args = [readFile, '-n', '1', '-c', '1', 'abc.txt'];
-    assert.strictEqual(headMain(...args), expected);
+    const { log, err } = mockConsole([expected]);
+    const args = [readFile, { log, err }, '-n', '1', '-c', '1', 'abc.txt'];
+    assert.strictEqual(headMain(...args), 1);
   });
 
   it('Should show usage when no file is provided', () => {
     const expected = 'usage: head[-n lines | -c bytes][file ...]';
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
-    assert.strictEqual(headMain(readFile), expected);
+    const { log, err } = mockConsole([expected]);
+    assert.strictEqual(headMain(readFile, { log, err }), 1);
   });
 
   it('Should throw error when illegal option is provided', () => {
     const expected = 'head: illegal option -- -k\nusage: head[-n lines | -c bytes][file ...]';
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
-    const args = ['-k', '1', 'abc.txt'];
-    assert.strictEqual(headMain(readFile, ...args), expected);
+    const { log, err } = mockConsole([expected]);
+    const args = [readFile, { log, err }, '-k', '1', 'abc.txt'];
+    assert.strictEqual(headMain(...args), 1);
   });
 
-  it('Should work for options provided without space', () => {
+  it('Should work for -n option provided without space', () => {
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
-    let args = ['-n1', 'abc.txt'];
-    assert.strictEqual(headMain(readFile, ...args), 'hello');
+    const { log, err } = mockConsole(['hello']);
+    const args = [readFile, { log, err }, '-n1', 'abc.txt'];
+    assert.strictEqual(headMain(...args), 0);
+  });
 
-    args = ['-c1', 'abc.txt'];
-    assert.strictEqual(headMain(readFile, ...args), 'h');
+  it('Should work for -c option provided without space', () => {
+    const readFile = mockReadFile({ 'abc.txt': 'hello' });
+    const { log, err } = mockConsole(['h']);
+    assert.strictEqual(headMain(readFile, { log, err }, '-c1', 'abc.txt'), 0);
   });
 
   it('Should work for options with and without space', () => {
     const content = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk';
     const expected = 'a\nb\nc\nd\ne';
-    let args = ['-n', '1', '-n5', 'abc.txt'];
-    let readFile = mockReadFile({ 'abc.txt': content });
-    assert.strictEqual(headMain(readFile, ...args), expected);
-
-    readFile = mockReadFile({ 'abc.txt': 'hello' });
-    args = ['-c', '2', '-c4', 'abc.txt'];
-    assert.strictEqual(headMain(readFile, ...args), 'hell');
+    const readFile = mockReadFile({ 'abc.txt': content });
+    const { log, err } = mockConsole([expected]);
+    const args = [readFile, { log, err }, '-n', '1', '-n5', 'abc.txt'];
+    assert.strictEqual(headMain(...args), 0);
   });
 
   it('Should give first line with numeric option', () => {
-    let readFile = mockReadFile({ 'abc.txt': 'hello' });
-    assert.strictEqual(headMain(readFile, '-1', 'abc.txt'), 'hello');
+    const readFile = mockReadFile({ 'abc.txt': 'hello' });
+    const { log, err } = mockConsole(['hello']);
+    assert.strictEqual(headMain(readFile, { log, err }, '-1', 'abc.txt'), 0);
+  });
 
+  it('Should give first line with numeric option', () => {
     const content = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk';
     const expected = 'a\nb\nc\nd\ne';
-    readFile = mockReadFile({ 'abc.txt': content });
-    assert.strictEqual(headMain(readFile, '-5', 'abc.txt'), expected);
+    const readFile = mockReadFile({ 'abc.txt': content });
+    const { log, err } = mockConsole([expected]);
+    assert.strictEqual(headMain(readFile, { log, err }, '-5', 'abc.txt'), 0);
   });
 });

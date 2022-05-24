@@ -86,6 +86,12 @@ const combinationError = () => {
   };
 };
 
+const noFileError = () => {
+  return {
+    message: 'usage: head[-n lines | -c bytes][file ...]'
+  };
+};
+
 const parseArgs = (params) => {
   const args = splitArgs(params);
 
@@ -95,6 +101,10 @@ const parseArgs = (params) => {
 
   const [options, index] = getOptions(args);
   const fileNames = args.slice(index);
+
+  if (fileNames.length < 1) {
+    throw noFileError();
+  }
   return [fileNames, options];
 };
 

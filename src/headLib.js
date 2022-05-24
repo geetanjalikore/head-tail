@@ -20,25 +20,44 @@ const head = (content, { option, value }) => {
   return firstNLines(content, value);
 };
 
-const headMain = (readFile, ...args) => {
-  let fileNames, options;
+const display = ({ log, err }, fileContents) => {
+  fileContents.forEach((fileContent) => {
+    if (fileContent.isError) {
+      err(fileContent.message);
+      return;
+    }
+    log(fileContent.content);
+  });
+};
+
+const headMain = (readFile, { log, err }, ...args) => {
+  let fileNames, options, exitCode = 0;
   try {
     [fileNames, options] = parseArgs(args);
   } catch (error) {
-    return error.message;
+    err(error.message);
+    exitCode = 1;
+    return exitCode;
   }
 
-  if (fileNames.length < 1 || args[0] === '--help') {
-    return 'usage: head[-n lines | -c bytes][file ...]';
-  }
-
-  return fileNames.map((fileName) => {
+  const fileContents = fileNames.map((fileName) => {
     try {
-      return head(readFile(fileName, 'utf8'), options);
+      const content = head(readFile(fileName, 'utf8'), options);
+      return {
+        isError: false,
+        content: content,
+      };
     } catch (error) {
-      return error.message;
+      exitCode = 1;
+      return {
+        isError: true,
+        message: error.message,
+      };
     }
-  }).join('\n');
+  });
+
+  display({ log, err }, fileContents);
+  return exitCode;
 };
 
 exports.head = head;
