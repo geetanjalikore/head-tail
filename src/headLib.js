@@ -13,16 +13,16 @@ const firstNLines = (content, count) => {
   return join(lines.slice(0, count));
 };
 
-const head = (content, { option, value }) => {
+const head = (content, { option, count }) => {
   if (option === '-c') {
-    return firstNBytes(content, value);
+    return firstNBytes(content, count);
   }
-  return firstNLines(content, value);
+  return firstNLines(content, count);
 };
 
-const formatDisplay = (log, record) => {
+const formatRecord = (record) => {
   const heading = `==> ${record.fileName} <==`;
-  log(`${heading}\n${record.content}\n`);
+  return `${heading}\n${record.content}\n`;
 };
 
 const display = ({ log, err }, record, format) => {
@@ -30,7 +30,7 @@ const display = ({ log, err }, record, format) => {
     err(record.message);
     return;
   }
-  format ? formatDisplay(log, record) : log(record.content);
+  format ? log(formatRecord(record)) : log(record.content);
 };
 
 const displayRecords = ({ log, err }, fileRecords) => {
@@ -39,33 +39,17 @@ const displayRecords = ({ log, err }, fileRecords) => {
 };
 
 const headMain = (readFile, { log, err }, ...args) => {
-  let fileNames, options, exitCode = 0;
-  try {
-    [fileNames, options] = parseArgs(args);
-  } catch (error) {
-    err(error.message);
-    exitCode = 1;
-    return exitCode;
-  }
-
+  let exitCode = 0;
+  const [fileNames, options] = parseArgs(args);
   const fileRecords = fileNames.map((fileName) => {
     try {
       const content = head(readFile(fileName, 'utf8'), options);
-      return {
-        fileName: fileName,
-        isError: false,
-        content: content,
-      };
-    } catch (error) {
+      return { fileName: fileName, isError: false, content: content };
+    } catch (err) {
       exitCode = 1;
-      return {
-        fileName: fileName,
-        isError: true,
-        message: error.message,
-      };
+      return { fileName: fileName, isError: true, message: err.message };
     }
   });
-
   displayRecords({ log, err }, fileRecords);
   return exitCode;
 };

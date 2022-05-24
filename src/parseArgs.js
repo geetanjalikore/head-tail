@@ -1,7 +1,6 @@
-const isIllegalCount = (value) => !isFinite(value) || value < 1;
-
-const isIllegalOption = (option) =>
-  !(option.startsWith('-n') || option.startsWith('-c'));
+const isIllegalOption = (option) => {
+  return !(option.startsWith('-n') || option.startsWith('-c'));
+};
 
 const isOption = (arg) => /^-/.test(arg);
 
@@ -10,8 +9,8 @@ const splitOption = (arg) => {
     return ['-n', Math.abs(arg)];
   }
   const option = arg.substring(0, 2);
-  const value = arg.substring(2);
-  return [option, value];
+  const count = arg.substring(2);
+  return [option, count];
 };
 
 const splitArgs = (params) => {
@@ -20,8 +19,8 @@ const splitArgs = (params) => {
 
   while (index < params.length) {
     if (params[index].startsWith('-')) {
-      const [option, value] = splitOption(params[index]);
-      value !== '' ? args.push(option, value) : args.push(option);
+      const [option, count] = splitOption(params[index]);
+      count !== '' ? args.push(option, count) : args.push(option);
     } else {
       args.push(params[index]);
     }
@@ -45,51 +44,49 @@ const argToOptionError = (option) => {
   };
 };
 
-const illegalCountError = (option, value) => {
-  const type = option === '-c' ? 'byte' : 'line';
-  return { message: `head: illegal ${type} count -- ${value}` };
+const combinationError = () => {
+  return { message: 'head: can\'t combine line and byte counts' };
 };
 
-const validateOption = (option, value) => {
+const noFileError = () => {
+  return { message: 'usage: head[-n lines | -c bytes][file ...]' };
+};
+
+const illegalCountError = (option, count) => {
+  const type = option === '-c' ? 'byte' : 'line';
+  return { message: `head: illegal ${type} count -- ${count}` };
+};
+
+const isIllegalCount = (count) => !isFinite(count) || count < 1;
+
+const validateOption = (option, count) => {
   if (isIllegalOption(option)) {
     throw illegalOptionError(option);
   }
-  if (value === undefined) {
+  if (count === undefined) {
     throw argToOptionError(option);
   }
-  if (isIllegalCount(value)) {
-    throw illegalCountError(option, value);
+  if (isIllegalCount(count)) {
+    throw illegalCountError(option, count);
   }
 };
 
 const getOptions = function (args) {
-  const options = { option: '-n', value: 10 };
+  const options = { option: '-n', count: 10 };
   let index = 0;
 
   while (isOption(args[index])) {
     const option = args[index];
-    const value = args[index + 1];
+    const count = args[index + 1];
 
-    validateOption(option, value);
+    validateOption(option, count);
 
     options.option = option;
-    options.value = +value;
+    options.count = +count;
 
     index = index + 2;
   }
   return [options, index];
-};
-
-const combinationError = () => {
-  return {
-    message: 'head: can\'t combine line and byte counts'
-  };
-};
-
-const noFileError = () => {
-  return {
-    message: 'usage: head[-n lines | -c bytes][file ...]'
-  };
 };
 
 const parseArgs = (params) => {
@@ -109,3 +106,6 @@ const parseArgs = (params) => {
 };
 
 exports.parseArgs = parseArgs;
+exports.splitOption = splitOption;
+exports.splitArgs = splitArgs;
+exports.getOptions = getOptions;

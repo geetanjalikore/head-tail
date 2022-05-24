@@ -4,12 +4,12 @@ const { head, firstNLines, firstNBytes, headMain } = lib;
 
 describe('head', () => {
   it('Should give first line when only 1 line is provided', () => {
-    assert.strictEqual(head('hello', { option: '-n', value: 10 }), 'hello');
-    assert.strictEqual(head('bye', { option: '-n', value: 10 }), 'bye');
+    assert.strictEqual(head('hello', { option: '-n', count: 10 }), 'hello');
+    assert.strictEqual(head('bye', { option: '-n', count: 10 }), 'bye');
   });
 
   it('Should give two lines when only 2 lines are provided', () => {
-    const options = { option: '-n', value: 10 };
+    const options = { option: '-n', count: 10 };
     assert.strictEqual(head('hello\nbye', options), 'hello\nbye');
     assert.strictEqual(head('bye\nhello', options), 'bye\nhello');
   });
@@ -17,23 +17,23 @@ describe('head', () => {
   it('Should give only first 10 lines', () => {
     const content = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk';
     const expected = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj';
-    assert.strictEqual(head(content, { option: '-n', value: 10 }), expected);
+    assert.strictEqual(head(content, { option: '-n', count: 10 }), expected);
   });
 
   it('Should give only first 6 lines when multiple lines are provided', () => {
     const content = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk';
     const expected = 'a\nb\nc\nd\ne\nf';
-    assert.strictEqual(head(content, { option: '-n', value: 6 }), expected);
+    assert.strictEqual(head(content, { option: '-n', count: 6 }), expected);
   });
 
   it('Should give only first byte', () => {
-    const options = { option: '-c', value: 1 };
+    const options = { option: '-c', count: 1 };
     assert.strictEqual(head('hello', options), 'h');
     assert.strictEqual(head('bye', options), 'b');
   });
 
   it('Should give first 2 bytes from multiple bytes', () => {
-    const options = { option: '-c', value: 2 };
+    const options = { option: '-c', count: 2 };
     assert.strictEqual(head('hello', options), 'he');
     assert.strictEqual(head('bye', options), 'by');
   });
@@ -173,25 +173,28 @@ describe('headMain', () => {
 
   it('Should throw an error if -n and -c options are combined', () => {
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
-    const expected = 'head: can\'t combine line and byte counts';
+    const expected = { message: 'head: can\'t combine line and byte counts' };
     const { log, err } = mockConsole([expected]);
     const args = [readFile, { log, err }, '-n', '1', '-c', '1', 'abc.txt'];
-    assert.strictEqual(headMain(...args), 1);
+    assert.throws(() => headMain(...args), expected);
   });
 
   it('Should show usage when no file is provided', () => {
-    const expected = 'usage: head[-n lines | -c bytes][file ...]';
+    const expected = { message: 'usage: head[-n lines | -c bytes][file ...]' };
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
     const { log, err } = mockConsole([expected]);
-    assert.strictEqual(headMain(readFile, { log, err }), 1);
+    assert.throws(() => headMain(readFile, { log, err }), expected);
   });
 
   it('Should throw error when illegal option is provided', () => {
-    const expected = 'head: illegal option -- -k\nusage: head[-n lines | -c bytes][file ...]';
+    const expected = {
+      message:
+        'head: illegal option -- -k\nusage: head[-n lines | -c bytes][file ...]'
+    };
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
     const { log, err } = mockConsole([expected]);
     const args = [readFile, { log, err }, '-k', '1', 'abc.txt'];
-    assert.strictEqual(headMain(...args), 1);
+    assert.throws(() => headMain(...args), expected);
   });
 
   it('Should work for -n option provided without space', () => {
