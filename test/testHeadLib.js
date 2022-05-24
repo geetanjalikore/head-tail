@@ -138,7 +138,9 @@ describe('headMain', () => {
 
   it('Should give first line of two files', () => {
     const readFile = mockReadFile({ 'abc.txt': 'hello', 'xyz.txt': 'bye' });
-    const { log, err } = mockConsole(['hello', 'bye']);
+    const file1 = '==> abc.txt <==\nhello\n';
+    const file2 = '==> xyz.txt <==\nbye\n';
+    const { log, err } = mockConsole([file1, file2]);
     const args = [readFile, { log, err }, 'abc.txt', 'xyz.txt'];
     assert.strictEqual(headMain(...args), 0);
   });
@@ -146,14 +148,18 @@ describe('headMain', () => {
   it('Should give first 2 lines of two files with -n option', () => {
     const files = { 'abc.txt': 'hello\nbye', 'xyz.txt': 'bye\nhello' };
     const readFile = mockReadFile(files);
-    const { log, err } = mockConsole(['hello\nbye', 'bye\nhello']);
+    const file1 = '==> abc.txt <==\nhello\nbye\n';
+    const file2 = '==> xyz.txt <==\nbye\nhello\n';
+    const { log, err } = mockConsole([file1, file2]);
     const args = [readFile, { log, err }, '-n', '2', 'abc.txt', 'xyz.txt'];
     assert.strictEqual(headMain(...args), 0);
   });
 
   it('Should give first 2 bytes of two files with -c option', () => {
     const readFile = mockReadFile({ 'abc.txt': 'hello', 'xyz.txt': 'bye' });
-    const { log, err } = mockConsole(['he', 'by']);
+    const file1 = '==> abc.txt <==\nhe\n';
+    const file2 = '==> xyz.txt <==\nby\n';
+    const { log, err } = mockConsole([file1, file2]);
     const args = [readFile, { log, err }, '-c', '2', 'abc.txt', 'xyz.txt'];
     assert.strictEqual(headMain(...args), 0);
   });
@@ -216,7 +222,7 @@ describe('headMain', () => {
     assert.strictEqual(headMain(readFile, { log, err }, '-1', 'abc.txt'), 0);
   });
 
-  it('Should give first line with numeric option', () => {
+  it('Should give first 5 lines with numeric option', () => {
     const content = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk';
     const expected = 'a\nb\nc\nd\ne';
     const readFile = mockReadFile({ 'abc.txt': content });

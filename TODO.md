@@ -1,6 +1,5 @@
 **TODO**
 
-- [ ] print the errors on error stream, output on output stream
     
 **Maybe**
 
@@ -8,6 +7,8 @@
 
 **Done**
 
+- [X] format multiple files output
+- [X] print the errors on error stream, output on output stream
 - [X] head -1
 - [X] Implement validate function for validation of args
 - [X] change the approach of illegal option 

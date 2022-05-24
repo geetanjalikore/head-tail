@@ -20,14 +20,22 @@ const head = (content, { option, value }) => {
   return firstNLines(content, value);
 };
 
-const display = ({ log, err }, fileContents) => {
-  fileContents.forEach((fileContent) => {
-    if (fileContent.isError) {
-      err(fileContent.message);
-      return;
-    }
-    log(fileContent.content);
-  });
+const formatDisplay = (log, record) => {
+  const heading = `==> ${record.fileName} <==`;
+  log(`${heading}\n${record.content}\n`);
+};
+
+const display = ({ log, err }, record, format) => {
+  if (record.isError) {
+    err(record.message);
+    return;
+  }
+  format ? formatDisplay(log, record) : log(record.content);
+};
+
+const displayRecords = ({ log, err }, fileRecords) => {
+  const format = fileRecords.length > 1 ? true : false;
+  fileRecords.forEach((record) => display({ log, err }, record, format));
 };
 
 const headMain = (readFile, { log, err }, ...args) => {
@@ -40,23 +48,25 @@ const headMain = (readFile, { log, err }, ...args) => {
     return exitCode;
   }
 
-  const fileContents = fileNames.map((fileName) => {
+  const fileRecords = fileNames.map((fileName) => {
     try {
       const content = head(readFile(fileName, 'utf8'), options);
       return {
+        fileName: fileName,
         isError: false,
         content: content,
       };
     } catch (error) {
       exitCode = 1;
       return {
+        fileName: fileName,
         isError: true,
         message: error.message,
       };
     }
   });
 
-  display({ log, err }, fileContents);
+  displayRecords({ log, err }, fileRecords);
   return exitCode;
 };
 
