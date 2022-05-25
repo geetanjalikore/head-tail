@@ -1,13 +1,14 @@
 **TODO**
 
-- [ ] tail -c +2 file 
-- [ ] Consider content instead files
+- [ ] simplify tail function
     
 **Maybe**
 
 
 **Done**
 
+- [X] Consider content instead files
+- [X] tail -c +2 file 
 - [X] Consider count in string format
 - [X] Make tail work for -n option
     - [X] head -n +1
