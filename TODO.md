@@ -1,13 +1,15 @@
 **TODO**
 
+- [ ] simplify tail function.
+- [ ] Extract split and join functions
 - [ ] Consider content instead files
-- [ ] Make tail work for default option
     
 **Maybe**
 
 
 **Done**
 
+- [X] Make tail work for default option
 - [X] Write an expectation for tail
 - [X] Create tailLib
 
