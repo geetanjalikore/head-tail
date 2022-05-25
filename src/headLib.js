@@ -1,4 +1,5 @@
 const { parseArgs } = require('./parseArgs.js');
+const { displayRecords } = require('./displayUtils.js');
 
 const NEWLINE = '\n';
 
@@ -20,25 +21,7 @@ const head = (content, { option, count }) => {
   return firstNLines(content, count);
 };
 
-const formatRecord = (record) => {
-  const heading = `==> ${record.fileName} <==`;
-  return `${heading}\n${record.content}\n`;
-};
-
-const display = ({ log, err }, record, format) => {
-  if (record.isError) {
-    err(record.message);
-    return;
-  }
-  format ? log(formatRecord(record)) : log(record.content);
-};
-
-const displayRecords = ({ log, err }, fileRecords) => {
-  const format = fileRecords.length > 1 ? true : false;
-  fileRecords.forEach((record) => display({ log, err }, record, format));
-};
-
-const headMain = (readFile, { log, err }, ...args) => {
+const headMain = (readFile, { log, error }, ...args) => {
   let exitCode = 0;
   const [fileNames, options] = parseArgs(args);
   const fileRecords = fileNames.map((fileName) => {
@@ -50,7 +33,7 @@ const headMain = (readFile, { log, err }, ...args) => {
       return { fileName: fileName, isError: true, message: err.message };
     }
   });
-  displayRecords({ log, err }, fileRecords);
+  displayRecords({ log, error }, fileRecords);
   return exitCode;
 };
 

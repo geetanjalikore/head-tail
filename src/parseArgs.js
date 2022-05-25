@@ -18,7 +18,7 @@ const splitArgs = (params) => {
   let index = 0;
 
   while (index < params.length) {
-    if (params[index].startsWith('-')) {
+    if (isOption(params[index])) {
       const [option, count] = splitOption(params[index]);
       count !== '' ? args.push(option, count) : args.push(option);
     } else {
