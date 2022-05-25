@@ -1,8 +1,8 @@
 const { split, join } = require('./stringUtils.js');
 
-const tail = (content) => {
+const tail = (content, count) => {
   const lines = split(content).reverse();
-  const lastLines = lines.slice(0, 10).reverse();
+  const lastLines = lines.slice(0, count).reverse();
   return join(lastLines);
 };
 

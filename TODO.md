@@ -1,8 +1,8 @@
 **TODO**
 
 - [ ] simplify tail function.
+- [ ] Extract lastNLines function
 - [ ] Make tail work for -n option
-    - [ ] tail -n 3
 - [ ] Consider content instead files
     
 **Maybe**
@@ -10,6 +10,8 @@
 
 **Done**
 
+- [X] Consider line count argument to tail function
+- [X] tail -n 3 file
 - [X] Extract split and join functions
 - [X] Make tail work for default option
 - [X] Write an expectation for tail
