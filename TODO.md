@@ -1,7 +1,5 @@
 **TODO**
 
-- [ ] simplify tail function.
-- [ ] Extract lastNLines function
 - [ ] Make tail work for -n option
 - [ ] Consider content instead files
     
@@ -10,6 +8,10 @@
 
 **Done**
 
+- [X] Make tail work for -c option
+- [X] Consider different contract of option for tail
+- [X] simplify tail function.
+- [X] Extract lastNLines function
 - [X] Consider line count argument to tail function
 - [X] tail -n 3 file
 - [X] Extract split and join functions
