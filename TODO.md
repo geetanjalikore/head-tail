@@ -1,12 +1,19 @@
 **TODO**
 
+- [ ] Consider content instead files
+- [ ] Make tail work for default option
     
 **Maybe**
 
-- [ ] Separate tests of headMain and head into other file
 
 **Done**
 
+- [X] Write an expectation for tail
+- [X] Create tailLib
+
+----------------------
+
+- [X] Separate tests of headMain and head into other file
 - [X] format multiple files output
 - [X] print the errors on error stream, output on output stream
 - [X] head -1

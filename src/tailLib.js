@@ -1,0 +1,1 @@
+exports.tail = (content) => content;
