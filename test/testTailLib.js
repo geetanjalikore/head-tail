@@ -45,4 +45,16 @@ describe('tail', () => {
     const options = { option: '-c', count: 5 };
     assert.strictEqual(tail('bye\nhello\nhi', options), 'lo\nhi');
   });
+
+  it('Should give all lines starting from 2nd line', () => {
+    const options = { option: '-n', count: '+2' };
+    assert.strictEqual(tail('hello\nby\nhi\nbye', options), 'by\nhi\nbye');
+  });
+
+  it('Should give all lines starting from 5th line', () => {
+    const content = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk';
+    const expected = 'e\nf\ng\nh\ni\nj\nk';
+    const options = { option: '-n', count: '+5' };
+    assert.strictEqual(tail(content, options), expected);
+  });
 });

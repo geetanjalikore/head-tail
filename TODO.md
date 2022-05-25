@@ -1,6 +1,6 @@
 **TODO**
 
-- [ ] Make tail work for -n option
+- [ ] tail -c +2 file 
 - [ ] Consider content instead files
     
 **Maybe**
@@ -8,6 +8,9 @@
 
 **Done**
 
+- [X] Consider count in string format
+- [X] Make tail work for -n option
+    - [X] head -n +1
 - [X] Make tail work for -c option
 - [X] Consider different contract of option for tail
 - [X] simplify tail function.
