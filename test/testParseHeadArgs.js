@@ -1,5 +1,5 @@
 const assert = require('assert');
-const lib = require('../src/parseArgs.js');
+const lib = require('../src/parseHeadArgs.js');
 const { parseArgs, splitOption, splitArgs, getOptions } = lib;
 
 describe('splitOption', () => {

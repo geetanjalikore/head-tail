@@ -1,4 +1,4 @@
-const { parseArgs } = require('./parseArgs.js');
+const { parseArgs } = require('./parseHeadArgs.js');
 const { displayRecords } = require('./displayUtils.js');
 const { split, join } = require('./stringUtils.js');
 

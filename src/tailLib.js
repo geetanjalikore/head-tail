@@ -1,3 +1,4 @@
+const { parseArgs } = require('./parseTailArgs.js');
 const { split, join } = require('./stringUtils.js');
 
 const lastNLines = (lines, count) => lines.slice(-count);
@@ -25,4 +26,12 @@ const tail = (content, { option, count }) => {
   return join(lastNLines(lines, +count));
 };
 
+const tailMain = (readFile, ...args) => {
+  const [fileNames, options] = parseArgs(args);
+  return fileNames.map((fileName) => {
+    return tail(readFile(fileName, 'utf8'), options);
+  }).join('\n');
+};
+
 exports.tail = tail;
+exports.tailMain = tailMain;
