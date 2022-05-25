@@ -1,11 +1,6 @@
 const { parseArgs } = require('./parseArgs.js');
 const { displayRecords } = require('./displayUtils.js');
-
-const NEWLINE = '\n';
-
-const split = (content) => content.split(NEWLINE);
-
-const join = (lines) => lines.join(NEWLINE);
+const { split, join } = require('./stringUtils.js');
 
 const firstNBytes = (content, count) => content.slice(0, count);
 

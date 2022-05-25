@@ -1,4 +1,9 @@
-exports.tail = (content) => {
-  const lines = content.split('\n').reverse();
-  return lines.slice(0, 10).reverse().join('\n');
+const { split, join } = require('./stringUtils.js');
+
+const tail = (content) => {
+  const lines = split(content).reverse();
+  const lastLines = lines.slice(0, 10).reverse();
+  return join(lastLines);
 };
+
+exports.tail = tail;
