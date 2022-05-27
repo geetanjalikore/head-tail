@@ -29,18 +29,15 @@ const splitArgs = (params) => {
   return args;
 };
 
+const usage = () => 'usage: head[-n lines | -c bytes][file ...]';
+
 const illegalOptionError = (option) => {
-  return {
-    message:
-      `head: illegal option -- ${option}\n` +
-      'usage: head[-n lines | -c bytes][file ...]'
-  };
+  return { message: `head: illegal option -- ${option}\n` + usage() };
 };
 
 const argToOptionError = (option) => {
   return {
-    message: `head: option requires an argument -- ${option}\n` +
-      'usage: head[-n lines | -c bytes][file ...]'
+    message: `head: option requires an argument -- ${option}\n` + usage()
   };
 };
 
@@ -49,7 +46,7 @@ const combinationError = () => {
 };
 
 const noFileError = () => {
-  return { message: 'usage: head[-n lines | -c bytes][file ...]' };
+  return { message: usage() };
 };
 
 const illegalCountError = (option, count) => {
@@ -71,7 +68,7 @@ const validateOption = (option, count) => {
   }
 };
 
-const getOptions = function (args) {
+const getOptions = (args) => {
   const options = { option: '-n', count: 10 };
   let index = 0;
 
@@ -86,18 +83,25 @@ const getOptions = function (args) {
 
     index = index + 2;
   }
-  return [options, index];
+  return options;
 };
 
-const parseArgs = (params) => {
-  const args = splitArgs(params);
+const getFiles = (args) => {
+  let index = 0;
+  while (isOption(args[index])) {
+    index = index + 2;
+  }
+  return args.slice(index);
+};
 
+const parseArgs = (cmdArgs) => {
+  const args = splitArgs(cmdArgs);
   if (args.includes('-n') && args.includes('-c')) {
     throw combinationError();
   }
 
-  const [options, index] = getOptions(args);
-  const fileNames = args.slice(index);
+  const options = getOptions(args);
+  const fileNames = getFiles(args);
 
   if (fileNames.length < 1) {
     throw noFileError();

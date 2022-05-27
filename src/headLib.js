@@ -16,20 +16,35 @@ const head = (content, { option, count }) => {
   return firstNLines(content, count);
 };
 
+const headOfFile = (readFile, fileName, options) => {
+  try {
+    const headOfFile = head(readFile(fileName, 'utf8'), options);
+    return {
+      fileName: fileName,
+      isError: false,
+      content: headOfFile
+    };
+  } catch (err) {
+    return {
+      fileName: fileName,
+      isError: true,
+      message: err.message
+    };
+  }
+};
+
+const getExitCode = (headsOfFiles) => {
+  return headsOfFiles.some(({ isError }) => isError) ? 1 : 0;
+};
+
 const headMain = (readFile, { log, error }, ...args) => {
-  let exitCode = 0;
   const [fileNames, options] = parseArgs(args);
-  const fileRecords = fileNames.map((fileName) => {
-    try {
-      const content = head(readFile(fileName, 'utf8'), options);
-      return { fileName: fileName, isError: false, content: content };
-    } catch (err) {
-      exitCode = 1;
-      return { fileName: fileName, isError: true, message: err.message };
-    }
-  });
-  displayRecords({ log, error }, fileRecords);
-  return exitCode;
+  const headsOfFiles = fileNames.map(
+    fileName => headOfFile(readFile, fileName, options)
+  );
+
+  displayRecords({ log, error }, headsOfFiles);
+  return getExitCode(headsOfFiles);
 };
 
 exports.head = head;

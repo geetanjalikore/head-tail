@@ -29,18 +29,15 @@ const splitArgs = (params) => {
   return args;
 };
 
+const usage = () => 'usage: tail [-c # | -n #] [file ...]';
+
 const illegalOptionError = (option) => {
-  return {
-    message:
-      `tail: illegal option -- ${option}\n` +
-      'usage: tail [-c # | -n #] [file ...]'
-  };
+  return { message: `tail: illegal option -- ${option}\n` + usage() };
 };
 
 const argToOptionError = (option) => {
   return {
-    message: `tail: option requires an argument -- ${option}\n` +
-      'usage: tail [-c # | -n #] [file ...]'
+    message: `tail: option requires an argument -- ${option}\n` + usage()
   };
 };
 
@@ -49,7 +46,7 @@ const combinationError = () => {
 };
 
 const noFileError = () => {
-  return { message: 'usage: tail [-c # | -n #] [file ...]' };
+  return { message: usage() };
 };
 
 const illegalCountError = (option, count) => {
@@ -59,7 +56,7 @@ const illegalCountError = (option, count) => {
 
 const isIllegalCount = (count) => !isFinite(count) || count < 1;
 
-const validateOption = (option, count) => {
+const validateOption = ({ option, count }) => {
   if (isIllegalOption(option)) {
     throw illegalOptionError(option);
   }
@@ -71,19 +68,15 @@ const validateOption = (option, count) => {
   }
 };
 
-const getOptions = function (args) {
+const getOptions = (args) => {
   const options = { option: '-n', count: 10 };
   let index = 0;
 
   while (isOption(args[index])) {
-    const option = args[index];
-    const count = args[index + 1];
+    options.option = args[index];
+    options.count = args[index + 1];
 
-    validateOption(option, count);
-
-    options.option = option;
-    options.count = +count;
-
+    validateOption(options);
     index = index + 2;
   }
   return [options, index];

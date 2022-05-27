@@ -2,7 +2,7 @@ const assert = require('assert');
 const { headMain } = require('../src/headLib.js');
 
 const fileNotFoundError = (file) => {
-  return { message: `${file} not found` };
+  return { message: `head: ${file}: No such file or directory` };
 };
 
 const mockReadFile = (fileContents) => {
@@ -92,7 +92,7 @@ describe('headMain', () => {
 
   it('Should throw an error if unreadble file is provided', () => {
     const readFile = mockReadFile({ 'abc.txt': 'hello' });
-    const expected = 'xyz.txt not found';
+    const expected = 'head: xyz.txt: No such file or directory';
     const { log, error } = mockConsole([expected]);
     assert.strictEqual(headMain(readFile, { log, error }, 'xyz.txt'), 1);
   });

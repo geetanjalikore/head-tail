@@ -7,7 +7,7 @@ describe('splitOption', () => {
     assert.deepStrictEqual(splitOption('-n1'), ['-n', '1']);
     assert.deepStrictEqual(splitOption('-c1'), ['-c', '1']);
   });
-  it('Should split number as count and option as -n', () => {
+  it('Should split numeric option', () => {
     assert.deepStrictEqual(splitOption('-1'), ['-n', 1]);
     assert.deepStrictEqual(splitOption('-10'), ['-n', 10]);
   });
@@ -19,17 +19,18 @@ describe('splitArgs', () => {
     assert.deepStrictEqual(splitArgs(['-c1']), ['-c', '1']);
   });
   it('Should split the arguments with spaces', () => {
-    assert.deepStrictEqual(splitArgs(['-n', '1']), ['-n', '1']);
+    const expected = ['-n', '1', '-c', '3'];
+    assert.deepStrictEqual(splitArgs(['-n', '1', '-c3']), expected);
   });
 });
 
 describe('getOptions', () => {
-  it('Should give options and index', () => {
-    const expected = [{ option: '-n', count: 1 }, 2];
+  it('Should give options', () => {
+    const expected = { option: '-n', count: 1 };
     assert.deepStrictEqual(getOptions(['-n', '1']), expected);
   });
   it('Should give last option when multiple options are provided', () => {
-    const expected = [{ option: '-c', count: 4 }, 4];
+    const expected = { option: '-c', count: 4 };
     assert.deepStrictEqual(getOptions(['-c', '6', '-c', '4']), expected);
   });
 });
@@ -137,7 +138,7 @@ describe('parseArgs', () => {
     assert.deepStrictEqual(parseArgs(['-n', '1', '-n6', 'abc.txt']), expected);
 
     expected = [['abc.txt'], { option: '-n', count: 1 }];
-    assert.deepStrictEqual(parseArgs(['-n', '6', '-n1', 'abc.txt']), expected);
+    assert.deepStrictEqual(parseArgs(['-n6', '-n', 1, 'abc.txt']), expected);
 
     expected = [['abc.txt'], { option: '-c', count: 1 }];
     assert.deepStrictEqual(parseArgs(['-c', '6', '-c1', 'abc.txt']), expected);
@@ -148,7 +149,7 @@ describe('parseArgs', () => {
     assert.throws(() => parseArgs(['-n', '0', 'abc.txt']), expected);
   });
 
-  it('Should work for only provided number with hyphen', () => {
+  it('Should work for numeric option', () => {
     let expected = [['abc.txt'], { option: '-n', count: 1 }];
     assert.deepStrictEqual(parseArgs(['-1', 'abc.txt']), expected);
 
