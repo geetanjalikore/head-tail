@@ -1,17 +1,14 @@
-const { headMain } = require('./src/headLib.js');
 const fs = require('fs');
-const { exit } = require('process');
+const { headMain } = require('./src/headLib.js');
 
-const main = () => {
-  let exitCode;
+const main = (args) => {
+  const { log, error } = console;
   try {
-    const args = process.argv.slice(2);
-    exitCode = headMain(fs.readFileSync, console, ...args);
-    exit(exitCode);
+    process.exitCode = headMain(fs.readFileSync, { log, error }, ...args);
   } catch (error) {
     console.error(error.message);
-    exit(1);
+    process.exitCode = 1;
   }
 };
 
-main();
+main(process.argv.slice(2));

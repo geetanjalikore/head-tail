@@ -1,15 +1,11 @@
 const assert = require('assert');
 const { headMain } = require('../src/headLib.js');
 
-const fileNotFoundError = (file) => {
-  return { message: `head: ${file}: No such file or directory` };
-};
-
 const mockReadFile = (fileContents) => {
+  let index = 0;
   return (fileName, encoding) => {
-    if (!Object.keys(fileContents).includes(fileName)) {
-      throw fileNotFoundError(fileName);
-    }
+    assert.deepStrictEqual(fileName, Object.keys(fileContents)[index]);
+    index++;
     assert.strictEqual(encoding, 'utf8');
     return fileContents[fileName];
   };
@@ -21,12 +17,10 @@ const mockConsole = function (expected) {
     log: (actual) => {
       assert.strictEqual(actual, expected[count]);
       count += 1;
-      return actual;
     },
     error: (actual) => {
       assert.strictEqual(actual, expected[count]);
       count += 1;
-      return actual;
     }
   };
 };

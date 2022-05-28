@@ -40,3 +40,4 @@ tail -r file
 
 tail -q [file1 ...]
   Suppresses printing of headers when multiple files are being examined.
+```

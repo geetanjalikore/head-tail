@@ -16,25 +16,32 @@ const head = (content, { option, count }) => {
   return firstNLines(content, count);
 };
 
-const headOfFile = (readFile, fileName, options) => {
+const fileNotFoundError = (fileName) => {
+  return { message: `head: ${fileName}: No such file or directory` };
+};
+
+const getFileContent = (readFile, fileName) => {
+  const result = {};
   try {
-    const headOfFile = head(readFile(fileName, 'utf8'), options);
-    return {
-      fileName: fileName,
-      isError: false,
-      content: headOfFile
-    };
-  } catch (err) {
-    return {
-      fileName: fileName,
-      isError: true,
-      message: err.message
-    };
+    result.content = readFile(fileName, 'utf8');
+    return result;
+  } catch (error) {
+    return fileNotFoundError(fileName);
   }
 };
 
+const headOfFile = (readFile, fileName, options) => {
+  const result = getFileContent(readFile, fileName);
+  result.fileName = fileName;
+  if (result.message) {
+    return result;
+  }
+  result.content = head(result.content, options);
+  return result;
+};
+
 const getExitCode = (headsOfFiles) => {
-  return headsOfFiles.some(({ isError }) => isError) ? 1 : 0;
+  return +headsOfFiles.some(({ message }) => message);
 };
 
 const headMain = (readFile, { log, error }, ...args) => {

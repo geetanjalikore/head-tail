@@ -8,25 +8,19 @@ const splitOption = (arg) => {
   if (isFinite(arg)) {
     return ['-n', Math.abs(arg)];
   }
-  const option = arg.substring(0, 2);
-  const count = arg.substring(2);
+  const option = arg.slice(0, 2);
+  const count = arg.slice(2);
   return [option, count];
 };
 
-const splitArgs = (params) => {
-  const args = [];
-  let index = 0;
-
-  while (index < params.length) {
-    if (isOption(params[index])) {
-      const [option, count] = splitOption(params[index]);
-      count !== '' ? args.push(option, count) : args.push(option);
-    } else {
-      args.push(params[index]);
+const splitArgs = (cmdArgs) => {
+  return cmdArgs.flatMap((arg) => {
+    if (isOption(arg)) {
+      const [option, count] = splitOption(arg);
+      return count ? [option, count] : option;
     }
-    index = index + 1;
-  }
-  return args;
+    return arg;
+  });
 };
 
 const usage = () => 'usage: head[-n lines | -c bytes][file ...]';
@@ -35,7 +29,7 @@ const illegalOptionError = (option) => {
   return { message: `head: illegal option -- ${option}\n` + usage() };
 };
 
-const argToOptionError = (option) => {
+const countRequiredError = (option) => {
   return {
     message: `head: option requires an argument -- ${option}\n` + usage()
   };
@@ -43,10 +37,6 @@ const argToOptionError = (option) => {
 
 const combinationError = () => {
   return { message: 'head: can\'t combine line and byte counts' };
-};
-
-const noFileError = () => {
-  return { message: usage() };
 };
 
 const illegalCountError = (option, count) => {
@@ -61,55 +51,50 @@ const validateOption = (option, count) => {
     throw illegalOptionError(option);
   }
   if (count === undefined) {
-    throw argToOptionError(option);
+    throw countRequiredError(option);
   }
   if (isIllegalCount(count)) {
     throw illegalCountError(option, count);
   }
 };
 
-const getOptions = (args) => {
+const segregateArgs = (args) => {
   const options = { option: '-n', count: 10 };
   let index = 0;
-
   while (isOption(args[index])) {
     const option = args[index];
     const count = args[index + 1];
-
     validateOption(option, count);
-
     options.option = option;
     options.count = +count;
-
     index = index + 2;
   }
-  return options;
+  return { options, fileNames: args.slice(index) };
 };
 
-const getFiles = (args) => {
-  let index = 0;
-  while (isOption(args[index])) {
-    index = index + 2;
+const validateCombinedOptions = (args) => {
+  if (args.includes('-n') && args.includes('-c')) {
+    throw combinationError();
   }
-  return args.slice(index);
+};
+
+const validateFiles = (fileNames) => {
+  if (fileNames.length < 1) {
+    throw { message: usage() };
+  }
 };
 
 const parseArgs = (cmdArgs) => {
   const args = splitArgs(cmdArgs);
-  if (args.includes('-n') && args.includes('-c')) {
-    throw combinationError();
-  }
+  validateCombinedOptions(args);
 
-  const options = getOptions(args);
-  const fileNames = getFiles(args);
+  const { options, fileNames } = segregateArgs(args);
+  validateFiles(fileNames);
 
-  if (fileNames.length < 1) {
-    throw noFileError();
-  }
   return [fileNames, options];
 };
 
 exports.parseArgs = parseArgs;
 exports.splitOption = splitOption;
 exports.splitArgs = splitArgs;
-exports.getOptions = getOptions;
+exports.segregateArgs = segregateArgs;

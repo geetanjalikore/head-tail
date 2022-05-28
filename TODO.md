@@ -34,6 +34,8 @@
 # HEAD 
 
 - **TODO**
+    - [ ] Send an array of args to headMain
+    - [ ] Consider returning an object of filenames and options from parseArgs
 
 <br/>    
 
@@ -43,6 +45,10 @@
 
 - **Done**
 
+    - [X] convert while loop to flatMap in splitArgs function
+    - [X] ~~Extract a function from splitArgs~~
+    - [X] Extract function for checking fileNames length    
+    - [X] Extract function for combination option check
     - [X] Separate tests of headMain and head into other file
     - [X] Format multiple files output
     - [X] Print the errors on error stream, output on output stream

@@ -1,19 +1,21 @@
-const formatRecord = (record) => {
-  const heading = `==> ${record.fileName} <==`;
-  return `${heading}\n${record.content}\n`;
+const singleFileFormat = ({ content }) => content;
+
+const formatRecord = ({ fileName, content }) => {
+  const heading = `==> ${fileName} <==`;
+  return `${heading}\n${content}\n`;
 };
 
-const display = ({ log, error }, record, format) => {
-  if (record.isError) {
+const display = ({ log, error }, record, formatter) => {
+  if (record.message) {
     error(record.message);
     return;
   }
-  format ? log(formatRecord(record)) : log(record.content);
+  log(formatter(record));
 };
 
 const displayRecords = ({ log, error }, fileRecords) => {
-  const format = fileRecords.length > 1 ? true : false;
-  fileRecords.forEach((record) => display({ log, error }, record, format));
+  const formatter = fileRecords.length > 1 ? formatRecord : singleFileFormat;
+  fileRecords.forEach((record) => display({ log, error }, record, formatter));
 };
 
 exports.displayRecords = displayRecords;

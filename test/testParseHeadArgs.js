@@ -1,6 +1,6 @@
 const assert = require('assert');
 const lib = require('../src/parseHeadArgs.js');
-const { parseArgs, splitOption, splitArgs, getOptions } = lib;
+const { parseArgs, splitOption, splitArgs, segregateArgs } = lib;
 
 describe('splitOption', () => {
   it('Should split the option and count', () => {
@@ -24,14 +24,18 @@ describe('splitArgs', () => {
   });
 });
 
-describe('getOptions', () => {
-  it('Should give options', () => {
-    const expected = { option: '-n', count: 1 };
-    assert.deepStrictEqual(getOptions(['-n', '1']), expected);
+describe('segregateArgs', () => {
+  it('Should parse options and files', () => {
+    const expected = { options: { option: '-n', count: 1 }, fileNames: [] };
+    assert.deepStrictEqual(segregateArgs(['-n', '1']), expected);
   });
+
   it('Should give last option when multiple options are provided', () => {
-    const expected = { option: '-c', count: 4 };
-    assert.deepStrictEqual(getOptions(['-c', '6', '-c', '4']), expected);
+    const options = { option: '-c', count: 4 };
+    const fileNames = ['a.txt'];
+    const expected = { options, fileNames };
+    const args = ['-c', '6', '-c', '4', 'a.txt'];
+    assert.deepStrictEqual(segregateArgs(args), expected);
   });
 });
 
